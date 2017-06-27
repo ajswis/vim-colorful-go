@@ -2,7 +2,9 @@ if !exists("g:go_highlight_fields")
   let g:go_highlight_fields = 0
 endif
 if g:go_highlight_fields != 0
-  syn match goField                 /\(\.\)\@<=\w\+\([.\ \n\r\:\)\[,]\)\@=/
+  syn match goField                 /\(\.\)\@<=\w\+\([.\ \n\r\)\[,]\)\@=/
+  " Match fields in type constructors
+  syn match goField                 /\([{, ]\|\s\)\@<=\w\+\(:\)\@=/
 endif
 
 if !exists("g:go_highlight_functions")
@@ -25,10 +27,11 @@ if g:go_highlight_types != 0
   syn match goDeclType             /\<\(interface\|struct\)\>/ skipwhite skipnl
 endif
 
-hi link goReceiverOpen    Operator
-hi link goReceiverClose   Operator
+hi link goReceiverOpen    ContainerChars
+hi link goReceiverClose   ContainerChars
+hi link goTypeOpen        ContainerChars
+
 hi link goPointerOperator Operator
-hi link goTypeOpen        Operator
 
 hi link goMethodCall   Function
 hi link goFunctionCall Function
