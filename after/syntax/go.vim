@@ -32,7 +32,7 @@ if g:go_highlight_types != 0
   syn region goDeclInterfaceRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains fold contained
 
   " Match \w+\.\w+ but only highlight lone \w+ or (?>\.)\w+
-  syn match goDeclTypeW                  /\%(\w\+\.\)\?\w\+\(\[.*\]\S\+\)\?/ contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration skipwhite contained
+  syn match goDeclTypeW                  /\%(\w\+\.\)\?\w\+\(\[.*\]\s*\S\+\)\?/ contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration skipwhite contained
   syn match goDeclTypeType               /\w\+/ nextgroup=goDeclTypeMap skipwhite contained
   syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars,OperatorChars nextgroup=goDeclTypeW skipwhite keepend contained
   syn match goDeclTypeNS                 /\w\+\(\.\)\@1=/ skipwhite contained
@@ -42,7 +42,7 @@ if g:go_highlight_types != 0
 
   syn match goDeclTypeField              /\w\+/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW skipwhite contained
 
-  syn match goNewDeclType                /\w\+\ze\s\+\<\(struct\|interface\)\>/ nextgroup=goDeclStruct,goDeclInterface skipwhite contained
+  syn match goNewDeclType                /\w\+\(\s\+\(\*\|\[\]\|\s\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclStruct,goDeclInterface skipwhite contained
   syn match goDeclStruct                 /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface              /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
 endif
