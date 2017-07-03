@@ -61,10 +61,10 @@ if g:go_highlight_functions != 0
   syn match goPointerOperator      /\*/ nextgroup=goReceiverType contained skipwhite skipnl
   syn match goReceiverType         /\w\+/ contained
 
-  syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,goContainer,goString,goRawString,@goNumber,goTypeConstructor
+  syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,ContainerChars,goString,goRawString,@goNumber,goTypeConstructor
 
   " fix comment
-  syn match goFunctionTagLine       /\w\+(.\{-})\(\s*(.\{-})\|\s\S\+\)\?\(\s*\|$\)/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,goContainer,goComment
+  syn match goFunctionTagLine       /\w\+(.\{-})\(\s*(.\{-})\|\s\S\+\)\?\(\s*\|$\)/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment
   syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains nextgroup=goFunctionReturnRegion,goFunctionReturn skipwhite contained
   syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite contained
   syn match goFunctionReturn        /\w\+/ contains=@validFuncRegionContains skipwhite contained
