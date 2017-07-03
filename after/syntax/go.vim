@@ -53,6 +53,8 @@ if g:go_highlight_functions != 0
   syn clear goFunctionCall
   syn clear goFunction
 
+  syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/
+
   syn match goDeclaration          /\<func\>/ nextgroup=goReceiverRegion,goFunction skipwhite skipnl
   syn region goReceiverRegion      matchgroup=goContainer start=/(/ end=/)/ contains=goReceiver nextgroup=goFunction contained
   syn match goReceiver             /\(\w\|[ *]\)\+/ contained contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
@@ -68,10 +70,11 @@ if g:go_highlight_functions != 0
   syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite keepend contained
   syn match goFunctionReturn        /\w\+/ contains=@validFuncRegionContains skipwhite contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
-
-  syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/
 endif
 
+if !exists("g:go_highlight_methods")
+  let g:go_highlight_methods = 0
+endif
 if g:go_highlight_methods != 0
   syn clear goMethodCall
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/
