@@ -21,20 +21,21 @@ if g:go_highlight_types != 0
   syn clear goTypeName
   syn clear goDeclType
 
-  " Match \w+\.\w+ but only highlight lone \w+ or (?>\.)\w+
-  syn match goDeclTypeW                  /\%(\w\+\.\)\?\w\+\(\[.*\]\S\+\)\?/ contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration skipwhite contained
-  syn match goDeclTypeType               /\w\+/ nextgroup=goDeclTypeMap skipwhite contained
-  syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars,OperatorChars nextgroup=goDeclTypeW skipwhite keepend contained
-  syn match goDeclTypeNS                 /\w\+\(\.\)\@1=/ skipwhite contained
 
   syn cluster validTypeContains          contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goDeclTypeFieldSlice,goDeclTypeFieldPointerOp,goString,goRawString,OperatorChars,goContainer
   syn cluster validStructContains        contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goString,goRawString,OperatorChars,goContainer
   syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer,goType
 
   syn match goTypeDecl                   /\<type\>/ nextgroup=goNewDeclType,goTypeRegion skipwhite skipnl
-  syn region goTypeRegion                matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains fold keepend contained
+  syn region goTypeRegion                matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains fold contained
   syn region goDeclStructRegion          matchgroup=goContainer start=/{/ end=/}/ contains=@validStructContains fold keepend contained
   syn region goDeclInterfaceRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains fold keepend contained
+
+  " Match \w+\.\w+ but only highlight lone \w+ or (?>\.)\w+
+  syn match goDeclTypeW                  /\%(\w\+\.\)\?\w\+\(\[.*\]\S\+\)\?/ contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration skipwhite contained
+  syn match goDeclTypeType               /\w\+/ nextgroup=goDeclTypeMap skipwhite contained
+  syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars,OperatorChars nextgroup=goDeclTypeW skipwhite keepend contained
+  syn match goDeclTypeNS                 /\w\+\(\.\)\@1=/ skipwhite contained
 
   syn match goDeclTypeFieldPointerOp     /\*/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite contained
   syn region goDeclTypeFieldSlice        matchgroup=goContainer start=/\[/ end=/\]/ contains=goDecimalInt,goHexadecimalInt,goOctalInt nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite keepend contained
