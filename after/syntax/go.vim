@@ -14,8 +14,7 @@ endif
 if g:go_highlight_types != 0
   syn match goTypeConstructor      /\<\w\+\({\)\@1=/
 
-  " handle map[type]type
-  " handle field, field type
+  " TODO: handle nested interface types
 
   " This is most likely bad... probably very bad.. and brittle?
   syn clear goTypeDecl
@@ -24,7 +23,7 @@ if g:go_highlight_types != 0
 
   syn cluster validTypeContains          contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goDeclTypeFieldSlice,goDeclTypeFieldPointerOp,goString,goRawString,OperatorChars,goContainer
   syn cluster validStructContains        contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goString,goRawString,OperatorChars,goContainer
-  syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer
+  syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer,goType
 
   syn match goTypeDecl                   /\<type\>/ nextgroup=goNewDeclType,goTypeRegion skipwhite skipnl
   syn region goTypeRegion                matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains fold contained
@@ -63,12 +62,16 @@ if g:go_highlight_functions != 0
 
   syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,ContainerChars,goString,goRawString,@goNumber,goTypeConstructor
 
-  " fix comment
-  syn match goFunctionTagLine       /\w\+(.\{-})\(\s*(.\{-})\|\s\S\+\)\?\(\s*\|$\)/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment
-  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains nextgroup=goFunctionReturnRegion,goFunctionReturn skipwhite contained
-  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite contained
+  syn match goFunctionTagLine       /\w\+(.*)\(\s*(.*)\|\s\S\+\)\?/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment
+  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains nextgroup=goFunctionReturnRegion,goFunctionReturn skipwhite keepend contained
+  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite keepend contained
   syn match goFunctionReturn        /\w\+/ contains=@validFuncRegionContains skipwhite contained
-  syn match goFunction              /\w\+\ze(/ nextgroup=goFunctionParamRegion skipwhite contained
+  syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
+endif
+
+if g:go_highlight_methods != 0
+  syn clear goMethodCall
+  syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/
 endif
 
 " Order is important, so redefine
