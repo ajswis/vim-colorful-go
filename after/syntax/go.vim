@@ -37,7 +37,7 @@ if g:go_highlight_types != 0
   syn region goDeclInterfaceRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains fold keepend contained
 
   syn match goDeclTypeFieldPointerOp     /\*/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite contained
-  syn region goDeclTypeFieldSlice        matchgroup=goContainer start=/\[/ end=/\]/ contains=goDecimalInt,goHexadecimalInt,goOctalInt nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite contained
+  syn region goDeclTypeFieldSlice        matchgroup=goContainer start=/\[/ end=/\]/ contains=goDecimalInt,goHexadecimalInt,goOctalInt nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite keepend contained
 
   syn match goDeclTypeField              /\w\+/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW skipwhite contained
 
@@ -66,11 +66,10 @@ if g:go_highlight_functions != 0
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
 
   syn match goDeclaration          /\<func\>/ nextgroup=goReceiverRegion,goFunction skipwhite skipnl
-  syn region goReceiverRegion      matchgroup=goContainer start=/(/ end=/)/ contains=goReceiver nextgroup=goFunction contained
+  syn region goReceiverRegion      matchgroup=goContainer start=/(/ end=/)/ contains=goReceiver nextgroup=goFunction keepend contained
   syn match goReceiver             /\(\w\|[ *]\)\+/ contained contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
   syn match goReceiverVar          /\w\+/ nextgroup=goPointerOperator,goDeclTypeW skipwhite skipnl contained
   syn match goPointerOperator      /\*/ nextgroup=goDeclTypeW contained skipwhite skipnl
-
 endif
 
 if !exists("g:go_highlight_methods")
