@@ -56,7 +56,10 @@ if g:go_highlight_functions != 0
 
   syn match goDeclaration          /\<func\>/ nextgroup=goReceiverRegion,goFunction skipwhite skipnl
   syn region goReceiverRegion      matchgroup=goContainer start=/(/ end=/)/ contains=goReceiver nextgroup=goFunction contained
-  syn match goReceiver             /\(\w\|[ *]\)\+/ contained contains=goReceiverVar skipwhite skipnl contained
+  syn match goReceiver             /\(\w\|[ *]\)\+/ contained contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
+  syn match goReceiverVar          /\w\+/ nextgroup=goPointerOperator,goReceiverType skipwhite skipnl contained
+  syn match goPointerOperator      /\*/ nextgroup=goReceiverType contained skipwhite skipnl
+  syn match goReceiverType         /\w\+/ contained
 
   syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,goContainer,goString,goRawString,@goNumber,goTypeConstructor
 
