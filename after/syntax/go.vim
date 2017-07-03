@@ -5,7 +5,7 @@ if !exists("g:go_highlight_fields")
   let g:go_highlight_fields = 0
 endif
 if g:go_highlight_fields != 0
-  syn match goField                 /\(\.\)\@1<=\w\+\([.\ \n\r\:\)\[,+-\*\\\]]\)\@=/
+  syn match goField                 /\(\.\)\@1<=\w\+\([.\ \n\r\:\)\[,+-\*}\\\]]\)\@=/
 endif
 
 if !exists("g:go_highlight_types")
@@ -60,13 +60,16 @@ if g:go_highlight_functions != 0
   syn match goPointerOperator      /\*/ nextgroup=goReceiverType contained skipwhite skipnl
   syn match goReceiverType         /\w\+/ contained
 
-  syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,ContainerChars,goString,goRawString,@goNumber,goTypeConstructor
+  "TODO: add goDeclTypeW
+  syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,GoBuiltins,goDeclStruct,goDeclInterface,OperatorChars,ContainerChars,goString,goRawString,@goNumber,goTypeConstructor,goMethodCall
 
   syn match goFunctionTagLine       /\w\+(.*)\(\s*(.*)\|\s\S\+\)\?/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment
   syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains nextgroup=goFunctionReturnRegion,goFunctionReturn skipwhite keepend contained
   syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite keepend contained
   syn match goFunctionReturn        /\w\+/ contains=@validFuncRegionContains skipwhite contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
+
+  syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/
 endif
 
 if g:go_highlight_methods != 0
