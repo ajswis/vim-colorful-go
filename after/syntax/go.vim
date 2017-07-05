@@ -94,6 +94,8 @@ if g:go_highlight_methods != 0
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/
 endif
 
+syn match goLiteralStructField /\w\+\ze:[^=]/
+
 " Order is important, so redefine
 syn match goBuiltins /\<\v(append|cap|close|complex|copy|delete|imag|len)\ze\(/
 syn match goBuiltins /\<\v(make|new|panic|print|println|real|recover)\ze\(/
@@ -121,3 +123,4 @@ hi link goMethodCall             Function
 hi link goFunctionCall           Function
 
 hi link goContainer              ContainerChars
+hi link goLiteralStructField     Special
