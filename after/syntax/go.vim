@@ -73,8 +73,8 @@ if g:go_highlight_functions != 0
   syn match listOfVars              /\(, \|(\)\@<=\w\+\(\(, \w\+\)*, \w\+ \)\@=/ contained
 
   syn match goFunctionReturn        /[^{, ]\+/ contains=goDeclaration,goDeclTypeW skipwhite contained
-  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite contained
-  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars skipwhite contained
+  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite keepend extend contained
+  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars skipwhite keepend extend contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
 
   syn match goDeclaration           /\<func\>/ nextgroup=goReceiverRegion,goFunction,goFunctionParamRegion skipwhite skipnl
