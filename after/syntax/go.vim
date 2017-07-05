@@ -14,37 +14,40 @@ endif
 if g:go_highlight_types != 0
   syn match goTypeConstructor      /\<\w\+\({\)\@1=/
 
-  " TODO: handle nested interface types
-
   " This is most likely bad... probably very bad.. and brittle?
+  " mostly, it's incomplete but kinda matches gofmt, so theres that at least
   syn clear goTypeDecl
   syn clear goTypeName
   syn clear goDeclType
 
-
   syn cluster validTypeContains          contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goDeclTypeFieldSlice,goDeclTypeFieldPointerOp,goString,goRawString,OperatorChars,goContainer
   syn cluster validStructContains        contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goString,goRawString,OperatorChars,goContainer
-  syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer,goType
+  syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer,goType,goNestedInterfaceType
 
   syn match goTypeDecl                   /\<type\>/ nextgroup=goNewDeclType,goTypeRegion skipwhite skipnl
   syn region goTypeRegion                matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains fold contained
   syn region goDeclStructRegion          matchgroup=goContainer start=/{/ end=/}/ contains=@validStructContains fold contained
   syn region goDeclInterfaceRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains fold contained
+  syn match goNestedInterfaceType        /\w\+/ contained
 
+  " I think I hate this
+  syn cluster goDeclTypeContains         contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMapType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration,goDeclStruct,goDeclInterface
   " Match \w+\.\w+ but only highlight lone \w+ or (?>\.)\w+
-  syn match goDeclTypeW                  /\%(\w\+\.\)\?\w\+\(\[.*\]\s*\S\+\)\?/ contains=goDeclTypeNS,goDeclTypeType,goDeclTypeMap,ContainerChars,OperatorChars,goDeclaration skipwhite contained
-  syn match goDeclTypeType               /\w\+/ nextgroup=goDeclTypeMap skipwhite contained
-  syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars,OperatorChars nextgroup=goDeclTypeW skipwhite keepend contained
+  syn match goDeclTypeW                  /\(\[.*\]\|\*\)*\(\w\+\.\)\?\w\+\(\[.*\]\S\+\)\?/ contains=@goDeclTypeContains skipwhite contained
+  " this is actually horribly broken for nested maps but appears to work.. 🤷
+  syn match goDeclTypeType               /\w\+/ contains=@goNumber nextgroup=goDeclTypeMap skipwhite contained
+  syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars nextgroup=goDeclTypeW skipwhite contained
   syn match goDeclTypeNS                 /\w\+\(\.\)\@1=/ skipwhite contained
 
-  syn match goDeclTypeFieldPointerOp     /\*/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite contained
-  syn region goDeclTypeFieldSlice        matchgroup=goContainer start=/\[/ end=/\]/ contains=goDecimalInt,goHexadecimalInt,goOctalInt nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite keepend contained
+  syn match goDeclTypeField              /\w\+/ nextgroup=goDeclTypeW skipwhite contained
 
-  syn match goDeclTypeField              /\w\+/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW skipwhite contained
-
-  syn match goNewDeclType                /\w\+\(\s\+\(\*\|\[\]\|\s\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclStruct,goDeclInterface skipwhite contained
+  syn match goNewDeclType                /\w\+\(\s\([\*\[\] ]\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=goDeclStruct,goDeclInterface skipwhite contained
   syn match goDeclStruct                 /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface              /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
+
+  syn match goVarVar                     /[^, ]\+/ nextgroup=goVarSep,goDeclTypeW skipwhite contained
+  syn match goVarSep                     /,/ nextgroup=goVarVar skipwhite contained
+  syn keyword goVarDecl                  var nextgroup=goVarVar skipwhite
 endif
 
 if !exists("g:go_highlight_functions")
@@ -57,20 +60,28 @@ if g:go_highlight_functions != 0
 
   syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/
 
-  "TODO: add goDeclTypeW
-  syn cluster validFuncRegionContains contains=@goTypes,goField,goDeclaration,goBuiltins,goDeclStruct,goDeclInterface,OperatorChars,ContainerChars,goString,goRawString,@goNumber,goTypeConstructor,goMethodCall
+  syn match goFunctionTagLine       /\w\+(.*)\s*\((.*)\|\S\+\)\?/ nextgroup=goFunction contains=goFunction,goDeclaration,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment contained
 
-  syn match goFunctionTagLine       /\w\+(.*)\(\s*(.*)\|\s\+\S\+\)\?/ nextgroup=goFunction contains=goFunction,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment
-  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains nextgroup=goFunctionReturnRegion,goFunctionReturn skipwhite keepend contained
-  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@validFuncRegionContains skipwhite keepend contained
-  syn match goFunctionReturn        /\w\+/ contains=@validFuncRegionContains skipwhite contained
+  " This works but much like everything else, it is quite fragile. It doesn't
+  " handle inline interfaces or structs (but should it, really?). Though, that
+  " is probably more because of the terrible goDeclTypeW.. who knows...
+  " Whatever.. it seems to fit 98% of my use cases
+  syn match listOfVars              /\(\w\+, \)*\w\+ / contained
+  syn match listOfTypes             /\(\S\+\ze[,)]\)\+/ contains=goDeclTypeW,ContainerChars contained
+  syn match listOfVars              /\(, \|(\)\@<=\w\+\(\(, \w\+\)*, \w\+ \)\@=/ contained
+
+  syn match goFunctionReturn        /[^{, ]\+/ contains=goDeclaration,goDeclTypeW skipwhite contained
+  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite contained
+  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=goDeclaration,listOfTypes,listOfVars,ContainerChars,OperatorChars skipwhite contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
 
-  syn match goDeclaration          /\<func\>/ nextgroup=goReceiverRegion,goFunction skipwhite skipnl
-  syn region goReceiverRegion      matchgroup=goContainer start=/(/ end=/)/ contains=goReceiver nextgroup=goFunction keepend contained
-  syn match goReceiver             /\(\w\|[ *]\)\+/ contained contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
-  syn match goReceiverVar          /\w\+/ nextgroup=goPointerOperator,goDeclTypeW skipwhite skipnl contained
-  syn match goPointerOperator      /\*/ nextgroup=goDeclTypeW contained skipwhite skipnl
+  syn match goDeclaration           /\<func\>/ nextgroup=goReceiverRegion,goFunction,goFunctionParamRegion skipwhite skipnl
+  " Use the space between func and ( to determine if the next group is a
+  " receiver or an inlined function
+  syn region goReceiverRegion       matchgroup=goContainer start=/ (/ end=/)/ contains=goReceiver nextgroup=goFunction skipwhite contained
+  syn match goReceiver              /\(\w\|[ *]\)\+/ contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
+  syn match goReceiverVar           /\w\+/ nextgroup=goPointerOperator,goDeclTypeW skipwhite skipnl contained
+  syn match goPointerOperator       /\*/ nextgroup=goDeclTypeW skipwhite skipnl contained
 endif
 
 if !exists("g:go_highlight_methods")
@@ -94,9 +105,14 @@ hi link goTypeOpen               goContainer
 hi link goDeclTypeFieldType      Type
 hi link goNewDeclType            Type
 hi link goDeclTypeType           Type
+hi link goTypeVar                Type
+hi link goNestedInterfaceType    Type
 
-hi link goDeclInterface          Keyword
-hi link goDeclStruct             Keyword
+hi link goVarDecl                goDeclaration
+hi link goVarSep                 Operator
+
+hi link goDeclInterface          goDeclaration
+hi link goDeclStruct             goDeclaration
 
 hi link goFunction               Function
 hi link goMethodCall             Function
