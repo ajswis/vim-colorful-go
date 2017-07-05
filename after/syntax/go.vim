@@ -39,9 +39,12 @@ if g:go_highlight_types != 0
   syn region goDeclTypeMap               matchgroup=goContainer start=/\[/ end=/\]/ contains=goDeclTypeW,ContainerChars nextgroup=goDeclTypeW skipwhite contained
   syn match goDeclTypeNS                 /\w\+\(\.\)\@1=/ skipwhite contained
 
+  syn match goDeclTypeFieldPointerOp     /\*/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite contained
+  syn region goDeclTypeFieldSlice        matchgroup=goContainer start=/\[/ end=/\]/ contains=goDecimalInt,goHexadecimalInt,goOctalInt nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclTypeW,goDeclStruct,goDeclInterface skipwhite keepend contained
+
   syn match goDeclTypeField              /\w\+/ nextgroup=goDeclTypeW skipwhite contained
 
-  syn match goNewDeclType                /\w\+\(\s\([\*\[\] ]\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=goDeclStruct,goDeclInterface skipwhite contained
+  syn match goNewDeclType                /\w\+\(\s\([*\[\] ]\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=goDeclTypeFieldPointerOp,goDeclTypeFieldSlice,goDeclStruct,goDeclInterface skipwhite contained
   syn match goDeclStruct                 /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface              /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
 
@@ -66,7 +69,6 @@ if g:go_highlight_functions != 0
   " handle inline interfaces or structs (but should it, really?). Though, that
   " is probably more because of the terrible goDeclTypeW.. who knows...
   " Whatever.. it seems to fit 98% of my use cases
-  syn match listOfVars              /\(\w\+, \)*\w\+ / contained
   syn match listOfTypes             /\(\S\+\ze[,)]\)\+/ contains=goDeclTypeW,ContainerChars contained
   syn match listOfVars              /\(, \|(\)\@<=\w\+\(\(, \w\+\)*, \w\+ \)\@=/ contained
 
