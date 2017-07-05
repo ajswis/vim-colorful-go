@@ -22,7 +22,7 @@ if g:go_highlight_types != 0
 
   syn cluster validTypeContains          contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goDeclTypeFieldSlice,goDeclTypeFieldPointerOp,goString,goRawString,OperatorChars,goContainer
   syn cluster validStructContains        contains=goComment,goNewDeclType,goDeclTypeField,goDeclTypeW,goString,goRawString,OperatorChars,goContainer
-  syn cluster validInterfaceContains     contains=goComment,goFunctionTagLine,OperatorChars,goContainer,goType,goNestedInterfaceType
+  syn cluster validInterfaceContains     contains=goComment,goFunction,OperatorChars,goContainer,goType,goNestedInterfaceType
 
   syn match goTypeDecl                   /\<type\>/ nextgroup=goNewDeclType,goTypeRegion skipwhite skipnl
   syn region goTypeRegion                matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains fold contained
@@ -62,8 +62,6 @@ if g:go_highlight_functions != 0
   syn clear goReceiverType
 
   syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/
-
-  syn match goFunctionTagLine       /\w\+(.*)\s*\((.*)\|\S\+\)\?/ nextgroup=goFunction contains=goFunction,goDeclaration,goFunctionParamRegion,goFunctionReturnRegion,goFunctionReturn,OperatorChars,ContainerChars,goComment contained
 
   " This works but much like everything else, it is quite fragile. It doesn't
   " handle inline interfaces or structs (but should it, really?). Though, that
