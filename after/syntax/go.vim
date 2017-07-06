@@ -26,7 +26,8 @@ if g:go_highlight_types != 0
   syn match goTypeConstructor         /\<\w\+\({\)\@1=/
 
   syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField
-  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goString,goRawString,goMapType,goMapKeyRegion
+  " FIXME: not sure I _need_ to state goDecl_Region
+  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion
   syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
 
   syn match goDeclTypeField           /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
@@ -48,6 +49,7 @@ if g:go_highlight_types != 0
 
   " This is important in order to differentiate "field type" from "field struct"
   " and "field interface"
+  " FIXME: seems fishy, see @validStructContains
   syn match goDeclSIName              /\w\+\(\s\([*\[\] ]\)*\<\(struct\|interface\)\>\)\@=/ nextgroup=@goDeclTypeBegin,goDeclStruct,goDeclInterface skipwhite contained
   syn match goDeclStruct              /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface           /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
