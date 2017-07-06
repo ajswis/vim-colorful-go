@@ -26,7 +26,7 @@ if g:go_highlight_types != 0
   syn match goTypeConstructor         /\<\w\+\({\)\@1=/
 
   syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField
-  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goString,goRawString
+  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goString,goRawString,goMapType,goMapKeyRegion
   syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
 
   syn match goDeclTypeField           /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
@@ -57,7 +57,7 @@ if g:go_highlight_types != 0
   syn region goVarRegion              matchgroup=goContainer start=/(/ end=/)/ transparent contained
   syn keyword goVarDecl               var nextgroup=goVarVar,goVarRegion skipwhite
 
-  syn region goTypeAssertionRegion    matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclTypeBegin skipwhite contained
+  syn region goTypeAssertionRegion    matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclTypeBegin,goMapType,goMapKeyRegion skipwhite contained
   syn match goTypeAssertionOp         /\.\((\)\@=/ nextgroup=goTypeAssertionRegion skipwhite
 endif
 
