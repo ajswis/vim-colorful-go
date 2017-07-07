@@ -54,7 +54,7 @@ if g:go_highlight_types != 0
   syn match goDeclStruct              /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface           /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
 
-  syn match goVarVar                  /[^, ]\+/ nextgroup=goVarSep,@goDeclTypeBegin skipwhite contained
+  syn match goVarVar                  /[^, ]\+/ nextgroup=goVarSep,@goDeclTypeBegin,goMapType skipwhite contained
   syn match goVarSep                  /,/ nextgroup=goVarVar skipwhite contained
   syn region goVarRegion              matchgroup=goContainer start=/(/ end=/)/ transparent contained
   syn keyword goVarDecl               var nextgroup=goVarVar,goVarRegion skipwhite
@@ -71,7 +71,7 @@ if g:go_highlight_functions != 0
   syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
 
   " FIXME: ^{\], is a lazy hack-fix
-  syn match goFunctionReturn        /[^{\], ]\+/ contains=@goDeclarations,@goDeclTypeBegin skipwhite contained
+  syn match goFunctionReturn        /[^{\]), ]\+/ contains=@goDeclarations,@goDeclTypeBegin skipwhite contained
   syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite transparent contained
   syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars skipwhite transparent contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
