@@ -25,23 +25,24 @@ if g:go_highlight_types != 0
 
   syn match goTypeConstructor         /\<\w\+\({\)\@1=/
 
-  syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField
+  syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeName
   " FIXME: not sure I _need_ to state goDecl_Region
   syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion
   syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
 
   syn match goDeclTypeField           /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
+  syn match goDeclTypeName            /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
 
-  syn match goTypeDecl                /\<type\>/ nextgroup=goDeclSIName,goTypeRegion skipwhite skipnl
+  syn match goTypeDecl                /\<type\>/ nextgroup=goDeclTypeName,goTypeRegion skipwhite skipnl
   syn region goTypeRegion             matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains skipwhite fold contained
   syn region goDeclStructRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validStructContains skipwhite fold contained
   syn region goDeclInterfaceRegion    matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains skipwhite fold contained
   syn match goNestedInterfaceType     /\w\+/ contained
 
-  syn match goDeclTypeStart           /\*/ contains=OperatorChars nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeWord,goMapType,@goDeclarations skipwhite contained
-  syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeWord,goMapType,@goDeclarations skipwhite transparent contained
-  syn match goDeclTypeWord            /\w\+/ contains=goMapType,@goDeclarations skipwhite contained
-  syn match goDeclTypeNamespace       /\w\+\./ contains=OperatorChars nextgroup=goDeclTypeWord skipwhite contained
+  syn match goDeclTypeStart           /\*/ contains=OperatorChars nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite contained
+  syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite transparent contained
+  syn match goDeclTypeType            /\w\+/ contains=goMapType,@goDeclarations skipwhite contained
+  syn match goDeclTypeNamespace       /\w\+\./ contains=OperatorChars nextgroup=goDeclTypeType skipwhite contained
   syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeType,goDeclTypeNamespace,goDeclaration
 
   syn region goMapKeyRegion           matchgroup=goContainer start=/\[/ end=/\]/ contains=@goDeclTypeBegin,goDeclaration nextgroup=@goDeclTypeBegin skipwhite contained
@@ -54,10 +55,10 @@ if g:go_highlight_types != 0
   syn match goDeclStruct              /\<struct\>/ nextgroup=goDeclStructRegion skipwhite skipnl
   syn match goDeclInterface           /\<interface\>/ nextgroup=goDeclInterfaceRegion skipwhite skipnl
 
-  syn match goVarVar                  /[^, ]\+/ nextgroup=goVarSep,@goDeclTypeBegin,goMapType skipwhite contained
-  syn match goVarSep                  /,/ nextgroup=goVarVar skipwhite contained
+  syn match goVarName                 /[^, ]\+/ nextgroup=goVarSep,@goDeclTypeBegin,goMapType skipwhite contained
+  syn match goVarSep                  /,/ nextgroup=goVarName skipwhite contained
   syn region goVarRegion              matchgroup=goContainer start=/(/ end=/)/ transparent contained
-  syn keyword goVarDecl               var nextgroup=goVarVar,goVarRegion skipwhite
+  syn keyword goVarDecl               var nextgroup=goVarName,goVarRegion skipwhite
 
   syn region goTypeAssertionRegion    matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclTypeBegin,goMapType,goMapKeyRegion skipwhite contained
   syn match goTypeAssertionOp         /\.\((\)\@=/ nextgroup=goTypeAssertionRegion skipwhite
@@ -112,9 +113,10 @@ hi link goVarSep                 Operator
 
 hi link goTypeConstructor        Type
 hi link goDeclSIName             Type
-hi link goDeclTypeWord           Type
+hi link goDeclTypeType           Type
 hi link goNestedInterfaceType    Type
 hi link goMapType                Type
+hi link goDeclTypeName           Type
 
 hi link goVarDecl                goDeclaration
 hi link goDeclInterface          goDeclaration
@@ -126,24 +128,3 @@ hi link goFunctionCall           Function
 
 hi link goContainer              ContainerChars
 hi link goLiteralStructField     Special
-
-" don't commit this
-"func (c *Client) shipmentConfirmRequest(ctx context.Context, request shipmentConfirmRequest) (*shipmentConfirmResponse, error) {
-	"var response, bar shipmentConfirmResponse
-	"a := make(map[foo]bar)
-	"a := make(map[func()]bar)
-	"a := func(int, interface{}, struct{ foo int }) (a foo, b []bar, c map[foo][2]bar, d, e, f baz) { return 0 }
-	"a := func(a foo, b []bar, c map[foo]bar) int {}
-	"a := func(a foo, b []bar, c map[foo]interface{}) int {}
-	"a := func(a foo, b []bar, c map[func()]bar) int {}
-	"a := func(a foo, b []bar, c map[func()]func()) int {}
-	"b := func(f foo, c, a map[foo]int) (int, int) {}
-	"a := func(int) (a, b foo, c, d bar) {}
-	"b := func(int) interface{} {}
-	"c := func(int) int {}
-	"d := func(f func(int, asdf) int, a word) (int, thing, func(func())) {}
-	"e := func(f func() int, a word) func() {}
-	"f := func(f func() int, a word) (interface{}, interface{}) {}
-	"var g func() func(Service) int
-	"h := func(int) (int, string) {}
-"}
