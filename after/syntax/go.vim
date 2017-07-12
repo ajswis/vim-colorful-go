@@ -42,7 +42,7 @@ if g:go_highlight_types != 0
   syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeWord,goMapType,@goDeclarations skipwhite transparent contained
   syn match goDeclTypeWord            /\w\+/ contains=goMapType,@goDeclarations skipwhite contained
   syn match goDeclTypeNamespace       /\w\+\./ contains=OperatorChars nextgroup=goDeclTypeWord skipwhite contained
-  syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeWord,goDeclTypeNamespace
+  syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeType,goDeclTypeNamespace,goDeclaration
 
   syn region goMapKeyRegion           matchgroup=goContainer start=/\[/ end=/\]/ contains=@goDeclTypeBegin,goDeclaration nextgroup=@goDeclTypeBegin skipwhite contained
   syn keyword goMapType               map nextgroup=goMapKeyRegion skipwhite
