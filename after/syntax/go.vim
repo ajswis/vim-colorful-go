@@ -31,7 +31,7 @@ if g:go_highlight_types != 0
   syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
 
   syn match goDeclTypeField           /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
-  syn match goDeclNestedStructType    /\w\+\s*\($\|\/\)\@=/ nextgroup=goComment skipwhite contained
+  syn match goDeclNestedStructType    /\w\+\s*\($\|\/\)\@=/ skipwhite contained
   syn match goDeclTypeName            /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
 
   syn match goTypeDecl                /\<type\>/ nextgroup=goDeclTypeName,goTypeRegion skipwhite skipnl
@@ -44,7 +44,7 @@ if g:go_highlight_types != 0
   syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite transparent contained
   syn match goDeclTypeType            /\w\+/ contains=goMapType,@goDeclarations skipwhite contained
   syn match goDeclTypeNamespace       /\w\+\./ contains=OperatorChars nextgroup=goDeclTypeType skipwhite contained
-  syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeType,goDeclTypeNamespace,goDeclaration
+  syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeType,goDeclTypeNamespace,goDeclaration,goMapType,goDeclStruct,goDeclInterface
 
   syn region goMapKeyRegion           matchgroup=goContainer start=/\[/ end=/\]/ contains=@goDeclTypeBegin,goDeclaration nextgroup=@goDeclTypeBegin skipwhite contained
   syn keyword goMapType               map nextgroup=goMapKeyRegion skipwhite
@@ -72,8 +72,8 @@ if g:go_highlight_functions != 0
 
   syn match goFunctionCall          /\(\.\)\@1<!\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
 
-  " FIXME: ^{\], is a lazy hack-fix
-  syn match goFunctionReturn        /[^{\]), ]\+/ contains=@goDeclarations,@goDeclTypeBegin skipwhite contained
+  " FIXME: [^(] is a lazy hack-fix
+  syn match goFunctionReturn        /[^(]\{-}\({\|\/\|$\)\@=/ contains=@goDeclarations,@goDeclTypeBegin,goComment skipwhite contained
   syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite transparent contained
   syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars skipwhite transparent contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
