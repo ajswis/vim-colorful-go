@@ -5,23 +5,25 @@ syntax highlighting. This plugin assumes you have
 [vim-go](https://github.com/fatih/vim-go) installed and is untested outside that
 assumption.
 
-![Image 1](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/image1.png)
-
-![Image 2](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/image2.png)
+| Before                                                                                     | After                                                                         |
+| ---                                                                                        | ---                                                                           |
+| ![Before Image 1](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/beforeimage1.png) | ![Image 1](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/image1.png) |
+| ![Before Image 2](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/beforeimage2.png) | ![Image 2](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/image2.png) |
+| ![Before Image 3](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/beforeimage3.png) | ![Image 3](https://s3.amazonaws.com/ajswis-images/vim-colorful-go/image3.png) |
 
 ## Features
 
-Mostly, this plugin highlights non-native types when appropriate. It also
-assumes formatting matches the output of `gofmt`.
+Mostly, this plugin highlights non-native types when appropriate. It assumes
+formatting matches the output of `gofmt`.
 
-* Highlight types in var (...) blocks
-* Highlight types in receivers
-* Highlight types in structs
-* Highlight types in function parameters
-* Highlight types in function returns
-* Highlight methods/functions the same
-* Highlight literal struct fields
-* Uses the same highlighting option flags as `vim-go`
+vim-colorful-go also uses the same highlighting option flags as `vim-go`.
+
+Some things that are now highlighted:
+* types in `type (...)` blocks
+* type declarations in structs
+* types in function parameters
+* types in function returns
+* literal struct fields
 * ..probably more I can't remember
 
 ## Install
