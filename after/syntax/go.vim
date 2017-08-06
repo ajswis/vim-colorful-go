@@ -82,9 +82,8 @@ if g:go_highlight_functions != 0
   syn match goDeclaration           /\<func\>/ nextgroup=goReceiverRegion,goFunction,goFunctionParamRegion skipwhite skipnl
   " Use the space between func and ( to determine if the next group is a
   " receiver or an inlined function (which matches gofmt)
-  syn region goReceiverRegion       matchgroup=goContainer start=/ (/ end=/)/ contains=goReceiver nextgroup=goFunction skipwhite contained
-  syn match goReceiver              /\(\w\|[ *]\)\+/ contains=goReceiverVar,goPointerOperator skipwhite skipnl contained
-  syn match goReceiverVar           /\w\+/ nextgroup=goPointerOperator,@goDeclTypeBegin skipwhite skipnl contained
+  syn region goReceiverRegion       matchgroup=goContainer start=/ (/ end=/)/ contains=goReceiverVar,goPointerOperator,@goDeclTypeBegin nextgroup=goFunction skipwhite contained
+  syn match goReceiverVar           /\w\+ / nextgroup=goPointerOperator,@goDeclTypeBegin skipnl contained
   syn match goPointerOperator       /\*/ nextgroup=@goDeclTypeBegin skipwhite skipnl contained
 endif
 
