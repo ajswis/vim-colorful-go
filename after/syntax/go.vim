@@ -27,10 +27,11 @@ if g:go_highlight_types != 0
 
   syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeName
   " FIXME: not sure I _need_ to state goDecl_Region
-  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goDeclNestedStructType,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion,goPointerOperator
+  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeSep,goDeclNestedStructType,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion,goPointerOperator
   syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
 
-  syn match goDeclTypeField           /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
+  syn match goDeclTypeField           /\w\+/ nextgroup=goDeclTypeSep,@goDeclTypeBegin skipwhite contained
+  syn match goDeclTypeSep             /,/ nextgroup=goDeclTypeField skipwhite contained
   syn match goDeclNestedStructType    /\w\+\s*\($\|\/\)\@=/ skipwhite contained
   syn match goDeclTypeName            /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
 
@@ -111,6 +112,7 @@ syn region goBuiltinRegion matchgroup=goContainer start=/(/ end=/)/ transparent 
 hi link goPointerOperator        Operator
 hi link goTypeAssertionOp        Operator
 hi link goVarSep                 Operator
+hi link goDeclTypeSep            Operator
 
 hi link goTypeConstructor        Type
 hi link goDeclSIName             Type
