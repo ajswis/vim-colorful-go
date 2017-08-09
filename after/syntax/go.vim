@@ -1,23 +1,30 @@
 if !exists("g:go_highlight_fields")
   let g:go_highlight_fields = 0
 endif
+
+if !exists("g:go_highlight_functions")
+  let g:go_highlight_functions = 0
+endif
+
+if !exists("g:go_highlight_types")
+  let g:go_highlight_types = 0
+endif
+
+if !exists("g:go_highlight_methods")
+  let g:go_highlight_methods = 0
+endif
+
 if g:go_highlight_fields != 0
   syn match goField /\(\.\)\@1<=\w\+\([.\ \n\r\:\)\[,+-\*}\\\]]\)\@=/
 endif
 
 " Order matters...
-if !exists("g:go_highlight_functions")
-  let g:go_highlight_functions = 0
-endif
 if g:go_highlight_functions != 0
   " FIXME: This is too greedy
   syn match listOfTypes /\([^ ,)]\+\(,\|)\)\@=\)\+/ contains=@goDeclarations,@goDeclTypeBegin,goMapKeyRegion,goFunctionParamRegion,goFunctionReturnRegion,goDeclStructRegion,goDeclInterfaceRegion contained
   syn match listOfVars  /\([,(]\s*\)\@<=\w\+\(\(, \w\+\)*, \w\+ \)\@=/ contained
 endif
 
-if !exists("g:go_highlight_types")
-  let g:go_highlight_types = 0
-endif
 if g:go_highlight_types != 0
   syn clear goTypeDecl
   syn clear goTypeName
@@ -87,9 +94,6 @@ if g:go_highlight_functions != 0
   syn match goPointerOperator       /\*/ nextgroup=@goDeclTypeBegin skipwhite skipnl contained
 endif
 
-if !exists("g:go_highlight_methods")
-  let g:go_highlight_methods = 0
-endif
 if g:go_highlight_methods != 0
   syn clear goMethodCall
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
