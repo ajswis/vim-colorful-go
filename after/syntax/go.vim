@@ -1,30 +1,23 @@
 if !exists("g:go_highlight_fields")
   let g:go_highlight_fields = 0
 endif
-
-if !exists("g:go_highlight_functions")
-  let g:go_highlight_functions = 0
-endif
-
-if !exists("g:go_highlight_types")
-  let g:go_highlight_types = 0
-endif
-
-if !exists("g:go_highlight_methods")
-  let g:go_highlight_methods = 0
-endif
-
 if g:go_highlight_fields != 0
   syn match goField /\(\.\)\@1<=\w\+\([.\ \n\r\:\)\[,+-\*}\\\]]\)\@=/
 endif
 
 " Order matters...
+if !exists("g:go_highlight_functions")
+  let g:go_highlight_functions = 0
+endif
 if g:go_highlight_functions != 0
   " FIXME: This is too greedy
   syn match listOfTypes /\([^ ,)]\+\(,\|)\)\@=\)\+/ contains=@goDeclarations,@goDeclTypeBegin,goMapKeyRegion,goFunctionParamRegion,goFunctionReturnRegion,goDeclStructRegion,goDeclInterfaceRegion contained
   syn match listOfVars  /\([,(]\s*\)\@<=\w\+\(\(, \w\+\)*, \w\+ \)\@=/ contained
 endif
 
+if !exists("g:go_highlight_types")
+  let g:go_highlight_types = 0
+endif
 if g:go_highlight_types != 0
   syn clear goTypeDecl
   syn clear goTypeName
@@ -34,19 +27,19 @@ if g:go_highlight_types != 0
 
   syn cluster validTypeContains       contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeName
   " FIXME: not sure I _need_ to state goDecl_Region
-  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeSep,goDeclNestedStructType,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion,goPointerOperator
-  syn cluster validInterfaceContains  contains=goComment,goFunction,goNestedInterfaceType
+  syn cluster validStructContains     contains=goComment,goDeclSIName,goDeclTypeField,goDeclTypeSep,goDeclEmbeddedStructType,goString,goRawString,goMapType,goMapKeyRegion,goDeclStructRegion,goDeclInterfaceRegion,goPointerOperator
+  syn cluster validInterfaceContains  contains=goComment,goFunction,goEmbeddedInterfaceType
 
   syn match goDeclTypeField           /\w\+/ nextgroup=goDeclTypeSep,@goDeclTypeBegin skipwhite contained
   syn match goDeclTypeSep             /,/ nextgroup=goDeclTypeField skipwhite contained
-  syn match goDeclNestedStructType    /\w\+\s*\($\|\/\)\@=/ skipwhite contained
+  syn match goDeclEmbeddedStructType  /\w\+\s*\($\|\/\)\@=/ skipwhite contained
   syn match goDeclTypeName            /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
 
   syn match goTypeDecl                /\<type\>/ nextgroup=goDeclTypeName,goTypeRegion skipwhite skipnl
   syn region goTypeRegion             matchgroup=goContainer start=/(/ end=/)/ contains=@validTypeContains skipwhite fold contained
   syn region goDeclStructRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validStructContains skipwhite fold contained
   syn region goDeclInterfaceRegion    matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains skipwhite fold contained
-  syn match goNestedInterfaceType     /\w\+/ contained
+  syn match goEmbeddedInterfaceType   /\w\+/ contained
 
   syn match goDeclTypeStart           /\*/ contains=OperatorChars nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite contained
   syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite transparent contained
@@ -94,6 +87,9 @@ if g:go_highlight_functions != 0
   syn match goPointerOperator       /\*/ nextgroup=@goDeclTypeBegin skipwhite skipnl contained
 endif
 
+if !exists("g:go_highlight_methods")
+  let g:go_highlight_methods = 0
+endif
 if g:go_highlight_methods != 0
   syn clear goMethodCall
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
@@ -120,10 +116,10 @@ hi link goDeclTypeSep            Operator
 hi link goTypeConstructor        Type
 hi link goDeclSIName             Type
 hi link goDeclTypeType           Type
-hi link goNestedInterfaceType    Type
+hi link goEmbeddedInterfaceType  Type
 hi link goMapType                Type
 hi link goDeclTypeName           Type
-hi link goDeclNestedStructType   Type
+hi link goDeclEmbeddedStructType Type
 
 hi link goVarDecl                goDeclaration
 hi link goDeclInterface          goDeclaration
