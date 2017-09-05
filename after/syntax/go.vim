@@ -1,3 +1,19 @@
+
+let s:fold_block = 1
+let s:fold_import = 1
+let s:fold_varconst = 1
+if exists("g:go_fold_enable")
+  if index(g:go_fold_enable, 'block') == -1
+    let s:fold_block = 0
+  endif
+  if index(g:go_fold_enable, 'import') == -1
+    let s:fold_import = 0
+  endif
+  if index(g:go_fold_enable, 'varconst') == -1
+    let s:fold_varconst = 0
+  endif
+endif
+
 if !exists("g:go_highlight_fields")
   let g:go_highlight_fields = 0
 endif
@@ -97,6 +113,28 @@ if g:go_highlight_methods != 0
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
 endif
 
+syn clear goImport
+syn clear goVar
+syn clear goConst
+
+syn keyword goImport                   import nextgroup=goImportRegion
+syn keyword goVar                      var    nextgroup=goVarConstRegion
+syn keyword goConst                    const  nextgroup=goVarConstRegion
+
+if s:fold_import
+  syn region goImportRegion            start='(' end=')' transparent fold contains=goString,goComment matchgroup=goContainer
+else
+  syn region goImportRegion            start='(' end=')' transparent contains=goString,goComment matchgroup=goContainer
+endif
+
+if s:fold_varconst
+  syn region goVarConstRegion          start='('   end='^\s*)$' transparent fold matchgroup=goContainer
+                        \ contains=ALLBUT,goParen,goBlock,goFunction,goTypeName,goReceiverType,goReceiverVar
+else
+  syn region goVarConstRegion          start='('   end='^\s*)$' transparent matchgroup=goContainer
+                        \ contains=ALLBUT,goParen,goBlock,goFunction,goTypeName,goReceiverType,goReceiverVar
+endif
+
 syn cluster goDeclarations          contains=goDeclaration,goDeclStruct,goDeclInterface
 syn cluster goTypes                 contains=goType,goSignedInts,goUnsignedInts,goFloats,goComplexes
 syn cluster goNumbers               contains=goDecimalInt,goHexadecimalInt,goOctalInt,goFloat,goImaginary,goImaginaryFloat
@@ -132,3 +170,4 @@ hi link goFunctionCall           Function
 
 hi link goContainer              ContainerChars
 hi link goLiteralStructField     Special
+
