@@ -148,7 +148,12 @@ syn match goBuiltins /\<\(append\|cap\|close\|complex\|copy\|delete\|imag\|len\)
 syn match goBuiltins /\<\(make\|new\|panic\|print\|println\|real\|recover\)\((\)\@=/ nextgroup=goBuiltinRegion
 syn region goBuiltinRegion matchgroup=goContainer start=/(/ end=/)/ transparent contained
 
+syn region ParenContainer   matchgroup=goContainer start=/(/ end=/)/ transparent
+syn region BraceContainer   matchgroup=goContainer  start=/{/ end=/}/ transparent
+syn region BracketContainer matchgroup=goContainer start=/\[/ end=/\]/ transparent
+
 hi link goPointerOperator        Operator
+hi link goDeclTypeStart          Operator
 hi link goTypeAssertionOp        Operator
 hi link goVarSep                 Operator
 hi link goDeclTypeSep            Operator
@@ -170,4 +175,3 @@ hi link goFunctionCall           Function
 
 hi link goContainer              ContainerChars
 hi link goLiteralStructField     Special
-
