@@ -49,7 +49,7 @@ if g:go_highlight_types != 0
   syn match goDeclTypeField           /\w\+/ nextgroup=goDeclTypeSep,@goDeclTypeBegin skipwhite contained
   syn match goDeclTypeSep             /,/ nextgroup=goDeclTypeField skipwhite contained
   syn match goDeclEmbeddedType        /\w\+\s*\($\|\/\)\@=/ skipwhite contained
-  syn match goDeclEmbeddedTypeNS      /\w\+\.\(\w\+\)\@=/ contains=OperatorChars nextgroup=goDeclEmbeddedType skipwhite contained
+  syn match goDeclEmbeddedTypeNS      /\w\+\.\(\w\+\)\@=/ contains=Operator nextgroup=goDeclEmbeddedType skipwhite contained
   syn match goDeclTypeName            /\w\+/ nextgroup=@goDeclTypeBegin skipwhite contained
 
   syn cluster goDeclEmbeddedType      contains=goDeclEmbeddedType,goDeclEmbeddedTypeNS
@@ -59,10 +59,10 @@ if g:go_highlight_types != 0
   syn region goDeclStructRegion       matchgroup=goContainer start=/{/ end=/}/ contains=@validStructContains skipwhite fold contained
   syn region goDeclInterfaceRegion    matchgroup=goContainer start=/{/ end=/}/ contains=@validInterfaceContains skipwhite fold contained
 
-  syn match goDeclTypeStart           /\*/ contains=OperatorChars nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite contained
+  syn match goDeclTypeStart           /\*/ contains=Operator nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite contained
   syn region goDeclTypeStart          matchgroup=goContainer start=/\[/ end=/\]/ contains=@goNumbers nextgroup=goDeclTypeStart,goDeclTypeNamespace,goDeclTypeType,goMapType,@goDeclarations skipwhite transparent contained
   syn match goDeclTypeType            /\w\+/ contains=goMapType,@goDeclarations skipwhite contained
-  syn match goDeclTypeNamespace       /\w\+\./ contains=OperatorChars nextgroup=goDeclTypeType skipwhite contained
+  syn match goDeclTypeNamespace       /\w\+\./ contains=Operator nextgroup=goDeclTypeType skipwhite contained
   syn cluster goDeclTypeBegin         contains=goDeclTypeStart,goDeclTypeType,goDeclTypeNamespace,goDeclaration,goMapType,goDeclStruct,goDeclInterface
 
   syn region goMapKeyRegion           matchgroup=goContainer start=/\[/ end=/\]/ contains=@goDeclTypeBegin,goDeclaration nextgroup=@goDeclTypeBegin skipwhite contained
@@ -93,8 +93,8 @@ if g:go_highlight_functions != 0
 
   " FIXME: [^,()] is a lazy hack-fix that works in-tandem with listOfTypes
   syn match goFunctionReturn        /[^,()]\{-}\({\|\/\|$\)\@=/ contains=@goDeclarations,@goDeclTypeBegin,goComment skipwhite contained
-  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite transparent contained
-  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,OperatorChars skipwhite transparent contained
+  syn region goFunctionParamRegion  matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,Operator nextgroup=goFunctionReturn,goFunctionReturnRegion skipwhite transparent contained
+  syn region goFunctionReturnRegion matchgroup=goContainer start=/(/ end=/)/ contains=@goDeclarations,listOfTypes,listOfVars,Operator skipwhite transparent contained
   syn match goFunction              /\w\+\((\)\@1=/ nextgroup=goFunctionParamRegion skipwhite contained
 
   syn match goDeclaration           /\<func\>/ nextgroup=goReceiverRegion,goFunction,goFunctionParamRegion skipwhite skipnl
@@ -109,7 +109,6 @@ if !exists("g:go_highlight_methods")
   let g:go_highlight_methods = 0
 endif
 if g:go_highlight_methods != 0
-  syn clear goMethodCall
   syn match goMethodCall            /\(\.\)\@1<=\w\+\((\)\@1=/ nextgroup=goFuncMethCallRegion
 endif
 
